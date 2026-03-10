@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zeus Legacy — Complete Integration Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --font-display: 'Crimson Pro', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'SF Mono', Consolas, monospace;
+
+  --bg: #08090e;
+  --surface: #0f1118;
+  --surface2: #151823;
+  --surface3: #1a1e2e;
+  --surface-elevated: #1f2438;
+  --border: rgba(255,255,255,0.05);
+  --border-bright: rgba(255,255,255,0.12);
+  --text: #e2e8f5;
+  --text-dim: #7a8399;
+  --text-muted: #4d566d;
+
+  /* Zeus-themed palette */
+  --lightning: #a78bfa;
+  --lightning-dim: rgba(167,139,250,0.10);
+  --lightning-border: rgba(167,139,250,0.30);
+  --gold: #f5c542;
+  --gold-dim: rgba(245,197,66,0.08);
+  --gold-border: rgba(245,197,66,0.30);
+  --thunder: #60a5fa;
+  --thunder-dim: rgba(96,165,250,0.08);
+  --thunder-border: rgba(96,165,250,0.25);
+  --fire: #fb7185;
+  --fire-dim: rgba(251,113,133,0.08);
+  --fire-border: rgba(251,113,133,0.30);
+  --emerald: #34d399;
+  --emerald-dim: rgba(52,211,153,0.08);
+  --emerald-border: rgba(52,211,153,0.30);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,0.08);
+  --amber-border: rgba(251,191,36,0.30);
+  --sky: #38bdf8;
+  --sky-dim: rgba(56,189,248,0.08);
+  --sky-border: rgba(56,189,248,0.25);
+  --rose: #f472b6;
+  --rose-dim: rgba(244,114,182,0.08);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(167,139,250,0.4); }
+
+.page-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 2rem 6rem;
+}
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 5rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(ellipse, rgba(167,139,250,0.12) 0%, rgba(96,165,250,0.06) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 30px rgba(167,139,250,0.5));
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--lightning), var(--gold), var(--thunder));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.hero .subtitle {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  max-width: 700px;
+  margin: 0 auto 2rem;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat .num {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ===== NAV ===== */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  justify-content: center;
+}
+
+.toc a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.toc a:hover {
+  color: var(--lightning);
+  background: var(--lightning-dim);
+  border-color: var(--lightning-border);
+}
+
+/* ===== SECTION ===== */
+.section {
+  margin-bottom: 4rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header .icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-header .badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== MERMAID ===== */
+.mermaid-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.mermaid-container .mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== PHASE TIMELINE ===== */
+.timeline-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.phase-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  position: relative;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.phase-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 4px 0 0 4px;
+}
+
+.phase-card:hover {
+  border-color: var(--border-bright);
+  transform: translateX(4px);
+}
+
+.phase-card .phase-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.phase-card .phase-desc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+}
+
+.phase-card .phase-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+}
+
+.phase-card .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Phase accent colors */
+.phase-card.p0::before { background: var(--fire); }
+.phase-card.p1::before { background: var(--lightning); }
+.phase-card.p2::before { background: var(--thunder); }
+.phase-card.p3::before { background: var(--emerald); }
+.phase-card.p4::before { background: var(--gold); }
+.phase-card.p5::before { background: var(--sky); }
+.phase-card.p6::before { background: var(--rose); }
+.phase-card.p7::before { background: var(--fire); }
+.phase-card.p8::before { background: var(--amber); }
+.phase-card.p9::before { background: var(--orange); }
+.phase-card.p10::before { background: var(--thunder); }
+.phase-card.p11::before { background: var(--lightning); }
+.phase-card.p12::before { background: var(--emerald); }
+
+.p0 .phase-title { color: var(--fire); }
+.p1 .phase-title { color: var(--lightning); }
+.p2 .phase-title { color: var(--thunder); }
+.p3 .phase-title { color: var(--emerald); }
+.p4 .phase-title { color: var(--gold); }
+.p5 .phase-title { color: var(--sky); }
+.p6 .phase-title { color: var(--rose); }
+.p7 .phase-title { color: var(--fire); }
+.p8 .phase-title { color: var(--amber); }
+.p9 .phase-title { color: var(--orange); }
+.p10 .phase-title { color: var(--thunder); }
+.p11 .phase-title { color: var(--lightning); }
+.p12 .phase-title { color: var(--emerald); }
+
+/* ===== GANTT-LIKE TIMELINE ===== */
+.gantt-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.gantt-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.gantt-table th {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.gantt-table td {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.gantt-label {
+  font-weight: 600;
+  white-space: nowrap;
+  width: 160px;
+}
+
+.gantt-agents {
+  width: 120px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.gantt-bar-cell {
+  position: relative;
+  padding: 0.35rem 0 !important;
+}
+
+.gantt-bar {
+  height: 26px;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.02em;
+}
+
+.gantt-bar.blocked {
+  background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(251,113,133,0.15) 4px, rgba(251,113,133,0.15) 8px);
+  border: 1px dashed var(--fire-border);
+  color: var(--fire);
+}
+
+/* ===== WIREFRAME ===== */
+.wireframe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+}
+
+.wireframe-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.wireframe-card:hover {
+  border-color: var(--border-bright);
+}
+
+.wireframe-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.wireframe-card .wf-header {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wireframe-card .wf-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.wireframe-card .wf-header .wf-tag {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+}
+
+.wireframe-body {
+  padding: 1.25rem;
+  overflow-x: auto;
+}
+
+/* ASCII wireframe rendering */
+.wf-ascii {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.3;
+  white-space: pre;
+  color: var(--text-dim);
+  overflow-x: auto;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+}
+
+/* Visual wireframe (CSS-rendered) */
+.wf-visual {
+  background: #111420;
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.wf-phone-frame {
+  width: 260px;
+  height: 480px;
+  border: 2px solid rgba(167,139,250,0.25);
+  border-radius: 16px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #0a0c18 0%, #12162a 100%);
+  position: relative;
+  overflow: hidden;
+  font-size: 0.6rem;
+}
+
+.wf-phone-frame .wf-char {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 80px;
+  border: 1px dashed rgba(167,139,250,0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lightning);
+  font-size: 1.4rem;
+  background: var(--lightning-dim);
+}
+
+.wf-phone-frame .wf-reward-info {
+  position: absolute;
+  top: 100px;
+  left: 10px;
+  right: 10px;
+  height: 24px;
+  background: rgba(245,197,66,0.08);
+  border: 1px solid rgba(245,197,66,0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 0.5rem;
+  font-weight: 600;
+}
+
+.wf-phone-frame .wf-board {
+  position: absolute;
+  top: 130px;
+  left: 10px;
+  right: 10px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 2px;
+  height: 180px;
+}
+
+.wf-cell {
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+}
+
+.wf-cell.high { background: rgba(167,139,250,0.2); border: 1px solid rgba(167,139,250,0.3); }
+.wf-cell.low { background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.2); }
+.wf-cell.scatter { background: rgba(245,197,66,0.25); border: 1px solid rgba(245,197,66,0.4); color: var(--gold); }
+.wf-cell.multi { background: rgba(52,211,153,0.2); border: 1px solid rgba(52,211,153,0.3); color: var(--emerald); }
+
+.wf-phone-frame .wf-row1 {
+  position: absolute;
+  bottom: 100px;
+  left: 10px;
+  right: 10px;
+  height: 26px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(245,197,66,0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 0.42rem;
+  color: var(--gold);
+}
+
+.wf-phone-frame .wf-row2 {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.wf-btn-circle {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.wf-btn-circle.small {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(245,197,66,0.25);
+  background: rgba(245,197,66,0.06);
+  font-size: 0.6rem;
+}
+
+.wf-btn-circle.spin {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(167,139,250,0.4);
+  background: radial-gradient(circle, rgba(167,139,250,0.15), rgba(167,139,250,0.05));
+  font-size: 0.55rem;
+  color: var(--lightning);
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(167,139,250,0.15);
+}
+
+.wf-btn-label {
+  font-size: 0.35rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ===== POPUP WIREFRAMES ===== */
+.popup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.popup-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.popup-card .popup-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.popup-card .popup-body {
+  padding: 1rem;
+}
+
+.popup-preview {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.popup-preview .popup-title-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.popup-preview .popup-title-bar .ptitle {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.popup-preview .popup-title-bar .pclose {
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.popup-preview .pvalue {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.popup-preview .psubtext {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.popup-preview .pbtn {
+  padding: 0.3rem 1.5rem;
+  background: linear-gradient(135deg, rgba(245,197,66,0.2), rgba(245,197,66,0.1));
+  border: 1px solid var(--gold-border);
+  border-radius: 6px;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.7rem;
+  margin-top: 0.3rem;
+}
+
+.popup-preview .pgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.popup-preview .pgrid-item {
+  padding: 0.3rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+.popup-preview .pgrid-item.selected {
+  border-color: var(--gold-border);
+  background: var(--gold-dim);
+  color: var(--gold);
+}
+
+.popup-preview .pslider {
+  width: 80%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  position: relative;
+  margin: 0.3rem 0;
+}
+
+.popup-preview .pslider-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, var(--lightning), var(--gold));
+  border-radius: 3px;
+}
+
+.popup-preview .pslider-knob {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  top: -3px;
+  left: 38%;
+  box-shadow: 0 0 6px rgba(245,197,66,0.4);
+}
+
+.popup-preview .ptoggle-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.popup-preview .ptoggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+}
+
+.popup-preview .ptoggle-box {
+  width: 28px;
+  height: 14px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 7px;
+  position: relative;
+}
+
+.popup-preview .ptoggle-box.on { background: rgba(167,139,250,0.3); }
+.popup-preview .ptoggle-box .knob {
+  width: 10px;
+  height: 10px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: all 0.2s;
+}
+.popup-preview .ptoggle-box.on .knob {
+  left: 16px;
+  background: var(--lightning);
+}
+
+/* ===== AGENT TABLE ===== */
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.agent-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s;
+}
+
+.agent-card:hover {
+  border-color: var(--border-bright);
+}
+
+.agent-card .agent-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+
+.agent-card .agent-role {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
+.agent-card .agent-scope {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  padding: 0.3rem 0.5rem;
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+/* ===== FLOWCHART CARDS ===== */
+.flow-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== HIERARCHY TREE ===== */
+.hierarchy-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.tree-mermaid {
+  overflow-x: auto;
+}
+
+.tree-mermaid .mermaid {
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== SUMMARY TABLE ===== */
+.summary-table-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.summary-table th {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1rem;
+  background: var(--surface2);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-table td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-table tr:last-child td { border-bottom: none; }
+
+.summary-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.summary-table .tasks-col { font-family: var(--font-mono); font-weight: 600; }
+.summary-table .tests-col { font-family: var(--font-mono); color: var(--emerald); }
+
+/* ===== STATE MACHINE ===== */
+.state-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ===== NOTES ===== */
+.note-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+}
+
+.note-box.warning { border-left-color: var(--fire); }
+.note-box.info { border-left-color: var(--thunder); }
+.note-box.success { border-left-color: var(--emerald); }
+
+.note-box .note-title {
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.note-box.warning .note-title { color: var(--fire); }
+.note-box.info .note-title { color: var(--thunder); }
+.note-box.success .note-title { color: var(--emerald); }
+
+/* ===== DATA FLOW ===== */
+.data-flow-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.df-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.df-card .df-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.df-card .df-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.df-card .df-items {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.df-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 3rem 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.2rem; }
+  .wireframe-grid { grid-template-columns: 1fr; }
+  .popup-grid { grid-template-columns: 1fr; }
+  .agent-grid { grid-template-columns: 1fr; }
+  .data-flow-wrapper { grid-template-columns: 1fr; }
+  .gantt-wrapper { padding: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-icon">&#9889;</div>
+  <h1>Zeus Legacy Integration</h1>
+  <p class="subtitle">
+    Complete integration blueprint for a 6&times;5 cascading slot machine &mdash; migrating from Cocos Creator 2.4 to the PixiJS Editor with React 18, PixiJS 8 &amp; Zustand.
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">13</div><div class="label">Phases</div></div>
+    <div class="hero-stat"><div class="num">83</div><div class="label">Tasks</div></div>
+    <div class="hero-stat"><div class="num">126+</div><div class="label">Tests</div></div>
+    <div class="hero-stat"><div class="num">8</div><div class="label">Agents</div></div>
+    <div class="hero-stat"><div class="num">359</div><div class="label">Assets</div></div>
+    <div class="hero-stat"><div class="num">70+</div><div class="label">GameObjects</div></div>
+  </div>
+</div>
+
+<!-- ===== TOC ===== -->
+<nav class="toc" id="toc">
+  <a href="#overview">Overview</a>
+  <a href="#timeline">Agent Timeline</a>
+  <a href="#phases">Phase Details</a>
+  <a href="#dependency">Dependency Graph</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#hierarchy">Hierarchy Tree</a>
+  <a href="#spin-flow">Spin Flow</a>
+  <a href="#state-machine">State Machine</a>
+  <a href="#data-flow">Data Flow</a>
+  <a href="#wireframes">Wireframes</a>
+  <a href="#popups">Popup Wireframes</a>
+  <a href="#agents">Agent Team</a>
+  <a href="#summary">Summary</a>
+</nav>
+
+<!-- ===== 1. OVERVIEW ===== -->
+<div class="section" id="overview">
+  <div class="section-header">
+    <div class="icon" style="background:var(--lightning-dim); border:1px solid var(--lightning-border);">&#9889;</div>
+    <h2>Executive Overview</h2>
+    <span class="badge" style="background:var(--fire-dim); color:var(--fire); border:1px solid var(--fire-border);">All Todo</span>
+  </div>
+
+  <div class="note-box warning">
+    <div class="note-title">Critical Blocker: Spine Version Incompatibility</div>
+    Zeus uses <strong>Spine 3.8.99</strong> format. The editor uses <code>@esotericsoftware/spine-pixi-v8</code> (Spine <strong>4.x</strong>). Phase 0.1 must resolve this before Phase 7 (Character &amp; Animations) can begin.
+  </div>
+
+  <div class="note-box info">
+    <div class="note-title">Key Design Decision</div>
+    Zeus Legacy is a completely <strong>new component type</strong> (<code>zeus-legacy</code>), NOT reusing the existing <code>cascade-slot</code> component. Every UI element becomes a separate child GameObject, individually editable. The root config contains ONLY game-level settings.
+  </div>
+
+  <div class="summary-table-wrapper">
+    <table class="summary-table">
+      <thead>
+        <tr><th>Property</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Source</td><td><code>zeus-legacy</code> &mdash; Cocos Creator 2.4.10, TypeScript 4.4</td></tr>
+        <tr><td>Target</td><td><code>pixijs-editor</code> &mdash; React 18 + PixiJS 8 + Zustand</td></tr>
+        <tr><td>Game Type</td><td>6-reel, 5-row cascading slot (Gates of Olympus style)</td></tr>
+        <tr><td>Design Resolution</td><td>720 &times; 1280 (portrait)</td></tr>
+        <tr><td>Symbol Types</td><td>HIGH (1-4), LOW (11-15), SCATTER (31), MULTIPLIER (41@N)</td></tr>
+        <tr><td>Spine Sets</td><td>14 animation sets (character, background, UI, symbols, effects)</td></tr>
+        <tr><td>Audio</td><td>32 sound effects across 3 audio sprite packs</td></tr>
+        <tr><td>Popup Types</td><td>11 distinct popup dialogs</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 2. AGENT EXECUTION TIMELINE ===== -->
+<div class="section" id="timeline">
+  <div class="section-header">
+    <div class="icon" style="background:var(--gold-dim); border:1px solid var(--gold-border);">&#128197;</div>
+    <h2>Agent Execution Timeline</h2>
+  </div>
+
+  <div class="gantt-wrapper">
+    <table class="gantt-table">
+      <thead>
+        <tr>
+          <th style="width:150px;">Phase</th>
+          <th style="width:70px;">Agents</th>
+          <th style="width:80px;">Duration</th>
+          <th style="width:90px;">Tokens</th>
+          <th>Execution (sequential left-to-right, parallel = stacked)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="gantt-label" style="color:var(--fire)">P0: Asset Pipeline</td>
+          <td class="gantt-agents" style="color:var(--fire)">A0</td>
+          <td class="gantt-agents" style="color:var(--fire); font-weight:700;">~2-4 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~10K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:18%; background:linear-gradient(90deg, rgba(251,113,133,0.3), rgba(251,113,133,0.15)); border:1px solid var(--fire-border); margin-left:0;">
+              MUST DO FIRST
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--lightning)">P1: Types &amp; Store</td>
+          <td class="gantt-agents" style="color:var(--lightning)">A1 &rarr; A2</td>
+          <td class="gantt-agents" style="color:var(--lightning); font-weight:700;">~1-2 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~15K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:15%; background:linear-gradient(90deg, rgba(167,139,250,0.3), rgba(167,139,250,0.15)); border:1px solid var(--lightning-border); margin-left:18%;">
+              A1 &rarr; A2
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--thunder)">P2: Engine Services</td>
+          <td class="gantt-agents" style="color:var(--thunder)">A3</td>
+          <td class="gantt-agents" style="color:var(--thunder); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~25K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:14%; background:linear-gradient(90deg, rgba(96,165,250,0.3), rgba(96,165,250,0.15)); border:1px solid var(--thunder-border); margin-left:33%;">
+              A3 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--emerald)">P3: Scene Rendering</td>
+          <td class="gantt-agents" style="color:var(--emerald)">A4</td>
+          <td class="gantt-agents" style="color:var(--emerald); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~20K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:14%; background:linear-gradient(90deg, rgba(52,211,153,0.3), rgba(52,211,153,0.15)); border:1px solid var(--emerald-border); margin-left:33%;">
+              A4 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--gold)">P4: UI Hierarchy</td>
+          <td class="gantt-agents" style="color:var(--gold)">A4 + A5</td>
+          <td class="gantt-agents" style="color:var(--gold); font-weight:700;">~3-4 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~30K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:14%; background:linear-gradient(90deg, rgba(245,197,66,0.3), rgba(245,197,66,0.15)); border:1px solid var(--gold-border); margin-left:33%;">
+              A4+A5 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--sky)">P5: Feature Services</td>
+          <td class="gantt-agents" style="color:var(--sky)">A3</td>
+          <td class="gantt-agents" style="color:var(--sky); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~25K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:12%; background:linear-gradient(90deg, rgba(56,189,248,0.3), rgba(56,189,248,0.15)); border:1px solid var(--sky-border); margin-left:47%;">
+              A3 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--rose)">P6: Inspector</td>
+          <td class="gantt-agents" style="color:var(--rose)">A5</td>
+          <td class="gantt-agents" style="color:var(--rose); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~20K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:12%; background:linear-gradient(90deg, rgba(244,114,182,0.3), rgba(244,114,182,0.15)); border:1px solid rgba(244,114,182,0.3); margin-left:47%;">
+              A5 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--fire)">P7: Character</td>
+          <td class="gantt-agents" style="color:var(--fire)">A3 + A4</td>
+          <td class="gantt-agents" style="color:var(--fire); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~20K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar blocked" style="width:12%; margin-left:47%;">
+              BLOCKED (Spine)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--amber)">P8: Popup System</td>
+          <td class="gantt-agents" style="color:var(--amber)">A4</td>
+          <td class="gantt-agents" style="color:var(--amber); font-weight:700;">~1.5-2 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~15K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:12%; background:linear-gradient(90deg, rgba(251,191,36,0.3), rgba(251,191,36,0.15)); border:1px solid var(--amber-border); margin-left:59%;">
+              A4 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--orange)">P9: Audio</td>
+          <td class="gantt-agents" style="color:var(--orange)">A3</td>
+          <td class="gantt-agents" style="color:var(--orange); font-weight:700;">~1-1.5 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~15K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:12%; background:linear-gradient(90deg, rgba(251,146,60,0.3), rgba(251,146,60,0.15)); border:1px solid rgba(251,146,60,0.3); margin-left:59%;">
+              A3 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--thunder)">P10: Network</td>
+          <td class="gantt-agents" style="color:var(--thunder)">A3</td>
+          <td class="gantt-agents" style="color:var(--thunder); font-weight:700;">~1-1.5 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~15K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:12%; background:linear-gradient(90deg, rgba(96,165,250,0.3), rgba(96,165,250,0.15)); border:1px solid var(--thunder-border); margin-left:59%;">
+              A3 (parallel)
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--lightning)">P11: Runtime</td>
+          <td class="gantt-agents" style="color:var(--lightning)">A4 + A6</td>
+          <td class="gantt-agents" style="color:var(--lightning); font-weight:700;">~3-4 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~30K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:16%; background:linear-gradient(90deg, rgba(167,139,250,0.3), rgba(167,139,250,0.15)); border:1px solid var(--lightning-border); margin-left:71%;">
+              A4+A6 wire all
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="gantt-label" style="color:var(--emerald)">P12: Polish &amp; Tests</td>
+          <td class="gantt-agents" style="color:var(--emerald)">A7 + A6</td>
+          <td class="gantt-agents" style="color:var(--emerald); font-weight:700;">~2-3 hrs</td>
+          <td class="gantt-agents" style="color:var(--text-muted)">~25K</td>
+          <td class="gantt-bar-cell">
+            <div class="gantt-bar" style="width:13%; background:linear-gradient(90deg, rgba(52,211,153,0.3), rgba(52,211,153,0.15)); border:1px solid var(--emerald-border); margin-left:87%;">
+              A7 100+ tests
+            </div>
+          </td>
+        </tr>
+        <tr style="background:var(--surface2); font-weight:700;">
+          <td class="gantt-label" style="color:var(--text);">TOTAL</td>
+          <td class="gantt-agents" style="color:var(--text-dim);">8 agents</td>
+          <td class="gantt-agents" style="color:var(--gold); font-weight:700; font-size:0.8rem;">~10-14 hrs<br/><span style="font-weight:400; font-size:0.65rem; color:var(--text-muted);">(sequential ~24-36 hrs)</span></td>
+          <td class="gantt-agents" style="color:var(--gold); font-weight:700;">~265K</td>
+          <td style="font-size:0.72rem; color:var(--text-dim); padding:0.6rem 0.5rem;">With max parallelization, wall-clock time is ~10-14 hrs agent execution. Sequential would be ~24-36 hrs.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note-box info">
+    <div class="note-title">Parallelization Strategy &mdash; Time Estimates</div>
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:0.3rem 1rem; font-size:0.82rem; margin-top:0.5rem;">
+      <span style="color:var(--fire); font-weight:600;">Stage 1 (sequential):</span><span>P0 (2-4h) &rarr; P1 (1-2h) = <strong>3-6 hrs</strong></span>
+      <span style="color:var(--thunder); font-weight:600;">Stage 2 (parallel):</span><span>P2 + P3 + P4 run together = <strong>3-4 hrs</strong> (longest: P4)</span>
+      <span style="color:var(--emerald); font-weight:600;">Stage 3 (parallel):</span><span>P5 + P6 + P7 run together = <strong>2-3 hrs</strong> (P7 blocked on Spine)</span>
+      <span style="color:var(--amber); font-weight:600;">Stage 4 (parallel):</span><span>P8 + P9 + P10 run together = <strong>1.5-2 hrs</strong> (longest: P8)</span>
+      <span style="color:var(--lightning); font-weight:600;">Stage 5 (sequential):</span><span>P11 (3-4h) &rarr; P12 (2-3h) = <strong>5-7 hrs</strong></span>
+      <span style="color:var(--gold); font-weight:700;">Total wall-clock:</span><span style="font-weight:700; color:var(--gold);">~14-22 hrs with parallelization (1.5-2.5 days)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3. PHASE DETAILS ===== -->
+<div class="section" id="phases">
+  <div class="section-header">
+    <div class="icon" style="background:var(--thunder-dim); border:1px solid var(--thunder-border);">&#128220;</div>
+    <h2>Phase Breakdown</h2>
+  </div>
+
+  <div class="timeline-grid">
+    <div class="phase-card p0">
+      <div class="phase-title">Phase 0: Asset Pipeline &amp; Investigation</div>
+      <div class="phase-desc">Spine version compat test, asset directory convention, bulk import utility, bitmap font assessment, symbol-to-asset mapping table.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--fire-dim); color:var(--fire);">5 tasks</span>
+        <span class="meta-item" style="background:var(--fire-dim); color:var(--fire);">MUST DO FIRST</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A0</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~10K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p1">
+      <div class="phase-title">Phase 1: Foundation &mdash; Types &amp; Store</div>
+      <div class="phase-desc">zeus-legacy.types.ts (enums, interfaces, defaults), register GameObjectType/ComponentType, zeusLegacyRuntimeStore.ts, constants registration.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--lightning-dim); color:var(--lightning);">6 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">12 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">A1 &rarr; A2</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~15K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p2">
+      <div class="phase-title">Phase 2: Core Engine Services</div>
+      <div class="phase-desc">ZeusSymbolService, ZeusReelService, ZeusSpinPhysics, ZeusWinEvaluator, ZeusCascadeService, ZeusMultiplierService &mdash; pure logic, no UI.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--thunder-dim); color:var(--thunder);">7 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">18 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A3</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~25K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p3">
+      <div class="phase-title">Phase 3: Scene Rendering</div>
+      <div class="phase-desc">ZeusLegacySceneRenderer, ZeusSymbolRenderer, ZeusReelRenderer, ZeusBoardRenderer, ZeusPartRenderer, ZeusHierarchyTemplate (70+ nodes), register in SceneCanvas.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">8 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">10 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A4</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~20K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p4">
+      <div class="phase-title">Phase 4: UI Hierarchy Components</div>
+      <div class="phase-desc">SpinButton (circular Spine), Labels, BetControl, SpinOptions, FreeSpin UI, TopBar/BottomBar, circular peripheral buttons, RewardInformation display.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--gold-dim); color:var(--gold);">10 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">10 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">A4 + A5</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~30K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p5">
+      <div class="phase-title">Phase 5: Feature Services</div>
+      <div class="phase-desc">ZeusFeatureManager, ZeusWinPresenter, ZeusNearWinService, ZeusGameFlowService &mdash; orchestration of wins, cascades, multipliers, free spins.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--sky-dim); color:var(--sky);">4 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">12 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A3</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~25K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p6">
+      <div class="phase-title">Phase 6: Inspector &amp; Configuration</div>
+      <div class="phase-desc">ZeusLegacyConfigInspector (game-level only), ZeusPartInspector (per-part dynamic UI), sub-editors with asset picker widgets, Spine/symbol/button editors.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--rose-dim); color:var(--rose);">8 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">8 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A5</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~20K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p7">
+      <div class="phase-title">Phase 7: Character System &amp; Animations</div>
+      <div class="phase-desc">Spine compat resolution, ZeusCharacterService (30+ anims, 5 tracks), ZeusCharacterRenderer, ZeusPandoraRenderer (ball + box + lightning).</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--fire-dim); color:var(--fire);">4 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">10 tests</span>
+        <span class="meta-item" style="background:var(--fire-dim); color:var(--fire);">BLOCKED (Spine 3.8 vs 4.x)</span>
+      </div>
+    </div>
+
+    <div class="phase-card p8">
+      <div class="phase-title">Phase 8: Popup System</div>
+      <div class="phase-desc">11 popup types: Win, BigWin, BuyFeature, TotalWin, BetPanel, GameRule, SpinOptions, MoreFreeSpin, BonusActive, Error, PayoutInfo, GameHistory.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--amber-dim); color:var(--amber);">13 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">13 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A4</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~15K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p9">
+      <div class="phase-title">Phase 9: Sound &amp; Audio</div>
+      <div class="phase-desc">ZeusAudioService (32 sound IDs, crossfade, volume), extract individual sounds from audio sprites, audio inspector with preview playback.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--orange-dim); color:var(--orange);">3 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">8 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A3</span>
+      </div>
+    </div>
+
+    <div class="phase-card p10">
+      <div class="phase-title">Phase 10: Network &amp; API</div>
+      <div class="phase-desc">ZeusNetworkService (POST /bet, GET /last-activity, etc.), ZeusMockService (7 scenarios), balance polling every 120s, dual format normalization.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--thunder-dim); color:var(--thunder);">3 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">10 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">Agent: A3</span>
+      </div>
+    </div>
+
+    <div class="phase-card p11">
+      <div class="phase-title">Phase 11: Runtime Play Mode</div>
+      <div class="phase-desc">ZeusLegacyPlayRenderer (animated grid), useZeusGameLoop hook, wire audio + character + popups to game events, loading screen, near-win sequencer.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--lightning-dim); color:var(--lightning);">7 tasks + tests</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">15 tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">A4 + A6</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">~30K tokens</span>
+      </div>
+    </div>
+
+    <div class="phase-card p12">
+      <div class="phase-title">Phase 12: Polish, E2E Tests &amp; Docs</div>
+      <div class="phase-desc">Full E2E test suite (100+ tests), performance testing (&lt;16ms render), memory leak checks, update PROGRESS.md, CLAUDE.md, create ZEUS_LEGACY.md.</div>
+      <div class="phase-meta">
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">5 tasks</span>
+        <span class="meta-item" style="background:var(--emerald-dim); color:var(--emerald);">100+ tests</span>
+        <span class="meta-item" style="background:rgba(0,0,0,0.3); color:var(--text-dim);">A7 + A6</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 4. DEPENDENCY GRAPH ===== -->
+<div class="section" id="dependency">
+  <div class="section-header">
+    <div class="icon" style="background:var(--emerald-dim); border:1px solid var(--emerald-border);">&#128279;</div>
+    <h2>Phase Dependency Graph</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+graph TD
+  P0["Phase 0<br/>Asset Pipeline<br/><em>MUST DO FIRST</em>"]:::critical --> P1["Phase 1<br/>Types & Store<br/><em>A1 → A2</em>"]:::foundation
+
+  P1 --> P2["Phase 2<br/>Engine Services<br/><em>A3</em>"]:::parallel1
+  P1 --> P3["Phase 3<br/>Scene Rendering<br/><em>A4</em>"]:::parallel1
+  P1 --> P4["Phase 4<br/>UI Hierarchy<br/><em>A4+A5</em>"]:::parallel1
+
+  P2 --> P5["Phase 5<br/>Features<br/><em>A3</em>"]:::parallel2
+  P3 --> P6["Phase 6<br/>Inspector<br/><em>A5</em>"]:::parallel2
+  P4 --> P6
+  P0 -.->|"Spine 3.8 blocker"| P7["Phase 7<br/>Character<br/><em>BLOCKED</em>"]:::blocked
+
+  P5 --> P8["Phase 8<br/>Popups<br/><em>A4</em>"]:::parallel3
+  P5 --> P9["Phase 9<br/>Audio<br/><em>A3</em>"]:::parallel3
+  P5 --> P10["Phase 10<br/>Network<br/><em>A3</em>"]:::parallel3
+
+  P8 --> P11["Phase 11<br/>Runtime<br/><em>A4+A6</em>"]:::integration
+  P9 --> P11
+  P10 --> P11
+  P6 --> P11
+  P7 --> P11
+
+  P11 --> P12["Phase 12<br/>Polish & Tests<br/><em>A7+A6</em>"]:::final
+
+  classDef critical fill:#2d1015,stroke:#fb7185,stroke-width:2,color:#fb7185
+  classDef foundation fill:#1a1530,stroke:#a78bfa,stroke-width:2,color:#a78bfa
+  classDef parallel1 fill:#0f1a28,stroke:#60a5fa,stroke-width:1,color:#60a5fa
+  classDef parallel2 fill:#0f1f1a,stroke:#34d399,stroke-width:1,color:#34d399
+  classDef parallel3 fill:#1f1a0f,stroke:#fbbf24,stroke-width:1,color:#fbbf24
+  classDef blocked fill:#2d1015,stroke:#fb7185,stroke-width:2,stroke-dasharray:5 5,color:#fb7185
+  classDef integration fill:#1a1530,stroke:#a78bfa,stroke-width:2,color:#a78bfa
+  classDef final fill:#0f1f1a,stroke:#34d399,stroke-width:2,color:#34d399
+    </div>
+  </div>
+
+  <div class="note-box success">
+    <div class="note-title">Critical Path</div>
+    <code>P0.1 (Spine test) &rarr; P7 (Character) &rarr; P11 (Runtime) &rarr; P12 (Tests)</code><br/>
+    <code>P0.2 (Asset convention) &rarr; P0.5 (Symbol map) &rarr; P1.1 (Types) &rarr; P2-4 (parallel) &rarr; P5-7 (parallel) &rarr; P8-10 (parallel) &rarr; P11 &rarr; P12</code>
+  </div>
+</div>
+
+<!-- ===== 5. ARCHITECTURE ===== -->
+<div class="section" id="architecture">
+  <div class="section-header">
+    <div class="icon" style="background:var(--sky-dim); border:1px solid var(--sky-border);">&#127959;</div>
+    <h2>Component Architecture</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+graph TB
+  subgraph Types["TYPES LAYER"]
+    T1["zeus-legacy.types.ts<br/><em>Enums, Interfaces, Configs</em>"]
+  end
+
+  subgraph Store["STATE LAYER"]
+    S1["zeusLegacyRuntimeStore<br/><em>gamePhase, board, economy,<br/>features, UI, spinData</em>"]
+  end
+
+  subgraph Constants["CONSTANTS"]
+    C1["zeus-legacy-assets.ts<br/><em>SYMBOL_MAP, AUDIO_IDS</em>"]
+    C2["components.ts<br/><em>PART_TYPES, ANIMATIONS</em>"]
+  end
+
+  subgraph Services["SERVICES (Pure Logic)"]
+    SV1["SymbolService"]
+    SV2["ReelService"]
+    SV3["SpinPhysics"]
+    SV4["WinEvaluator"]
+    SV5["CascadeService"]
+    SV6["MultiplierService"]
+    SV7["FeatureManager"]
+    SV8["GameFlowService"]
+    SV9["NetworkService"]
+    SVA["AudioService"]
+    SVB["CharacterService"]
+  end
+
+  subgraph Components["REACT COMPONENTS"]
+    direction LR
+    subgraph Editor["Editor Mode"]
+      E1["SceneRenderer"]
+      E2["BoardRenderer"]
+      E3["SymbolRenderer"]
+      E4["PartRenderer"]
+    end
+    subgraph Runtime["Runtime Mode"]
+      R1["PlayRenderer"]
+      R2["LoadingScreen"]
+      R3["PlayGrid"]
+    end
+    subgraph Inspector["Inspector"]
+      I1["ConfigInspector"]
+      I2["PartInspector"]
+      I3["AssetPicker"]
+    end
+    subgraph Popups["Popups (11)"]
+      PO["Win | BigWin | BuyFeature<br/>TotalWin | BetPanel<br/>SpinOptions | GameRule<br/>MoreFS | Bonus | Error<br/>GameHistory"]
+    end
+  end
+
+  T1 --> S1
+  T1 --> Services
+  C1 --> Services
+  C2 --> Components
+  S1 --> Components
+  Services --> S1
+
+  style Types fill:#1a1530,stroke:#a78bfa,color:#a78bfa
+  style Store fill:#0f1a28,stroke:#60a5fa,color:#60a5fa
+  style Constants fill:#1f1a0f,stroke:#fbbf24,color:#fbbf24
+  style Services fill:#0f1f1a,stroke:#34d399,color:#34d399
+  style Components fill:#1a0f1f,stroke:#f472b6,color:#f472b6
+    </div>
+  </div>
+</div>
+
+<!-- ===== 6. HIERARCHY TREE ===== -->
+<div class="section" id="hierarchy">
+  <div class="section-header">
+    <div class="icon" style="background:var(--amber-dim); border:1px solid var(--amber-border);">&#127795;</div>
+    <h2>GameObject Hierarchy (70+ nodes)</h2>
+  </div>
+
+  <div class="hierarchy-box" id="treeview-root">
+    <!-- Treeview rendered by JS below -->
+  </div>
+
+  <style>
+    .tv { font-family: var(--font-body); font-size: 0.88rem; user-select: none; padding: 0.5rem 0; }
+    .tv ul { list-style: none; margin: 0; padding: 0; }
+    .tv li { position: relative; }
+    .tv li > .tv-row { display: flex; align-items: center; gap: 0.4rem; padding: 3px 6px; border-radius: 5px; cursor: default; transition: background 0.12s; }
+    .tv li > .tv-row:hover { background: rgba(255,255,255,0.04); }
+    .tv li > ul { margin-left: 22px; border-left: 1px solid rgba(255,255,255,0.06); padding-left: 0; }
+
+    /* expand / collapse arrow */
+    .tv-arrow { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: var(--text-muted); cursor: pointer; flex-shrink: 0; transition: transform 0.15s; border-radius: 3px; }
+    .tv-arrow:hover { background: rgba(255,255,255,0.07); color: var(--text-dim); }
+    .tv-arrow.open { transform: rotate(90deg); }
+    .tv-arrow.empty { visibility: hidden; }
+
+    /* icon */
+    .tv-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+
+    /* name */
+    .tv-name { font-weight: 500; color: var(--text); white-space: nowrap; }
+    .tv-tag  { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); margin-left: 0.3rem; white-space: nowrap; }
+    .tv-note { font-size: 0.72rem; color: var(--text-muted); font-style: italic; margin-left: 0.3rem; white-space: nowrap; }
+
+    /* color variants on the name */
+    .tv-name.root      { color: var(--lightning); font-weight: 700; }
+    .tv-name.container { color: var(--thunder); }
+    .tv-name.part      { color: var(--emerald); }
+    .tv-name.label     { color: var(--gold); }
+    .tv-name.spine     { color: var(--lightning); }
+    .tv-name.button    { color: var(--rose); }
+    .tv-name.popup     { color: var(--fire); }
+    .tv-name.reel      { color: var(--text-dim); }
+    .tv-name.symbol    { color: var(--text-muted); }
+    .tv-name.audio     { color: var(--orange); }
+  </style>
+
+  <script>
+  // Tree data: [name, type, partType, note, children[]]
+  const TREE = ["ZeusLegacyGame", "root", "zeus-legacy-config", "", [
+    ["Background", "container", "background", "", [
+      ["BackgroundImage", "part", "bg_image", "sprite", []],
+      ["BackgroundEffects", "part", "bg_effects", "", []],
+    ]],
+    ["Character", "container", "character", "", [
+      ["ZeusSpine", "spine", "character_spine", "30+ anims, 5 tracks", []],
+      ["PandoraContainer", "container", "pandora_container", "", [
+        ["PandoraBall", "part", "pandora_ball", "pan-ball-idle", []],
+        ["PandoraBox", "part", "pandora_box", "pan-box-spin", []],
+      ]],
+    ]],
+    ["SlotBoard", "container", "board", "", [
+      ["BoardFrame", "spine", "board_frame", "screen-bg.json", []],
+      ["RewardInformation", "container", "reward_info", "", [
+        ["HintText", "label", "hint_text", "rotating tips", []],
+        ["WinAmountLabel", "label", "win_amount_label", "", []],
+        ["MultiplierLabel", "label", "multiplier_label", "", []],
+        ["TotalWinLabel", "label", "total_win_label", "", []],
+      ]],
+      ["ReelContainer", "container", "reel_container", "", [
+        ["Reel_0", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_0_0", "symbol", "symbol", "", []],
+          ["Symbol_0_1", "symbol", "symbol", "", []],
+          ["Symbol_0_2", "symbol", "symbol", "", []],
+          ["Symbol_0_3", "symbol", "symbol", "", []],
+          ["Symbol_0_4", "symbol", "symbol", "", []],
+        ]],
+        ["Reel_1", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_1_0 \u2026 Symbol_1_4", "symbol", "symbol", "", []],
+        ]],
+        ["Reel_2", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_2_0 \u2026 Symbol_2_4", "symbol", "symbol", "", []],
+        ]],
+        ["Reel_3", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_3_0 \u2026 Symbol_3_4", "symbol", "symbol", "", []],
+        ]],
+        ["Reel_4", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_4_0 \u2026 Symbol_4_4", "symbol", "symbol", "", []],
+        ]],
+        ["Reel_5", "reel", "reel", "\u00d75 symbols", [
+          ["Symbol_5_0 \u2026 Symbol_5_4", "symbol", "symbol", "", []],
+        ]],
+      ]],
+      ["WinEffectsLayer", "part", "win_effects", "chain-lightning, match-fx", []],
+      ["NearWinOverlay", "part", "near_win_overlay", "dim mask", []],
+    ]],
+    ["UI", "container", "ui_root", "", [
+      ["TopBar", "container", "top_bar", "", [
+        ["BalanceLabel", "label", "balance_label", "", []],
+        ["MenuButton", "button", "menu_button", "", []],
+        ["BuyFeatureButton", "button", "buy_feature_btn", "", []],
+      ]],
+      ["BottomBar", "container", "bottom_bar", "", [
+        ["SpinOptionsBtn", "button", "spin_options_btn", "circular, lightning icon", []],
+        ["SpinButton", "spine", "spin_button", "large circular Spine-animated", [
+          ["AutoSpinCounter", "label", "auto_spin_counter", "", []],
+        ]],
+        ["BetAmountBtn", "button", "bet_amount_btn", "circular, $ icon", [
+          ["BetAmountLabel", "label", "bet_amount_label", "", []],
+        ]],
+      ]],
+      ["FreeSpinUI", "container", "freespin_ui", "hidden in base game", [
+        ["FreeSpinCounter", "label", "freespin_counter", "", []],
+        ["MultiplierDisplay", "label", "multiplier_display", "", []],
+      ]],
+    ]],
+    ["Popups", "popup", "popup_root", "11 popup types", [
+      ["WinPopup", "popup", "win_popup", "", []],
+      ["BigWinPopup", "popup", "big_win_popup", "20\u00d7/35\u00d7/50\u00d7", []],
+      ["BuyFeaturePopup", "popup", "buy_feature_popup", "cinematic fullscreen", []],
+      ["TotalWinPopup", "popup", "total_win_popup", "", []],
+      ["BetPanelPopup", "popup", "bet_panel_popup", "slider + presets", []],
+      ["GameRulePopup", "popup", "game_rule_popup", "scrollable paytable", []],
+      ["SpinOptionsPopup", "popup", "spin_options_popup", "turbo/auto", []],
+      ["MoreFreeSpinPopup", "popup", "more_freespin_popup", "retrigger", []],
+      ["BonusActivePopup", "popup", "bonus_active_popup", "character roulette", []],
+      ["ErrorPopup", "popup", "error_popup", "", []],
+      ["GameHistoryPopup", "popup", "game_history_popup", "date grouped", []],
+    ]],
+    ["Audio", "audio", "audio_controller", "32 sounds", [
+      ["SoundController", "part", "sound_config", "BGM + SFX", []],
+    ]],
+  ]];
+
+  const ICONS = {
+    root: "\u26A1", container: "\uD83D\uDCC2", part: "\uD83D\uDCE6",
+    label: "\uD83C\uDFF7\uFE0F", spine: "\uD83D\uDC80", button: "\uD83D\uDD18",
+    popup: "\uD83D\uDCAC", reel: "\uD83C\uDFB0", symbol: "\uD83C\uDFB2", audio: "\uD83D\uDD0A",
+  };
+
+  function buildTree(node, depth) {
+    const [name, type, tag, note, children] = node;
+    const hasKids = children && children.length > 0;
+    const open = depth < 2; // auto-expand first 2 levels
+
+    let html = '<li>';
+    html += '<div class="tv-row">';
+    html += hasKids
+      ? '<span class="tv-arrow' + (open ? ' open' : '') + '" onclick="toggleTV(this)">\u25B6</span>'
+      : '<span class="tv-arrow empty">\u25B6</span>';
+    html += '<span class="tv-icon">' + (ICONS[type] || "\uD83D\uDCC4") + '</span>';
+    html += '<span class="tv-name ' + type + '">' + name + '</span>';
+    if (tag) html += '<span class="tv-tag">[' + tag + ']</span>';
+    if (note) html += '<span class="tv-note">\u2014 ' + note + '</span>';
+    html += '</div>';
+
+    if (hasKids) {
+      html += '<ul style="' + (open ? '' : 'display:none') + '">';
+      for (const child of children) html += buildTree(child, depth + 1);
+      html += '</ul>';
+    }
+    html += '</li>';
+    return html;
+  }
+
+  function toggleTV(arrow) {
+    arrow.classList.toggle('open');
+    const ul = arrow.closest('li').querySelector(':scope > ul');
+    if (ul) ul.style.display = ul.style.display === 'none' ? '' : 'none';
+  }
+
+  document.getElementById('treeview-root').innerHTML =
+    '<div class="tv"><ul>' + buildTree(TREE, 0) + '</ul></div>' +
+    '<div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1rem; padding:0.75rem; background:var(--surface2); border-radius:8px; border:1px solid var(--border);">' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\u26A1</span><span style="color:var(--lightning)">Root / Spine</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83D\uDCC2</span><span style="color:var(--thunder)">Container</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83D\uDCE6</span><span style="color:var(--emerald)">Part</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83C\uDFF7\uFE0F</span><span style="color:var(--gold)">Label / Text</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83D\uDD18</span><span style="color:var(--rose)">Button</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83D\uDCAC</span><span style="color:var(--fire)">Popup</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;"><span>\uD83D\uDD0A</span><span style="color:var(--orange)">Audio</span></div>' +
+    '</div>';
+  </script>
+</div>
+
+<!-- ===== 7. SPIN FLOW ===== -->
+<div class="section" id="spin-flow">
+  <div class="section-header">
+    <div class="icon" style="background:var(--gold-dim); border:1px solid var(--gold-border);">&#127920;</div>
+    <h2>Game Spin Flow</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+flowchart TD
+  IDLE["&#9898; IDLE<br/><em>Waiting for spin</em>"]:::idle --> VALIDATE["Validate<br/><em>Balance &ge; bet?</em>"]
+  VALIDATE -->|YES| DEDUCT["Deduct Bet"]
+  VALIDATE -->|NO| ERROR["Error Popup"]:::error
+
+  DEDUCT --> API["POST /bet<br/><em>{token, amount, extra_bet}</em>"]
+  API -->|SUCCESS| SPIN["SPIN START<br/><em>ON_STACK &rarr; SPINNING</em>"]:::active
+  API -->|FAIL| FALLBACK["Fallback: Local Sim"]:::warn
+  FALLBACK --> SPIN
+
+  SPIN --> REEL["Reel Spin Animation<br/><em>Per-reel: delay &rarr; accel &rarr; max speed &rarr; blur</em>"]:::active
+
+  REEL --> NEARWIN{"Near-Win?<br/><em>2+ scatters on stopped reels</em>"}
+  NEARWIN -->|YES| NW["NEAR WIN<br/><em>Slow to 150px/s, dim mask, 4s hold</em>"]:::warn
+  NEARWIN -->|NO| STOP
+  NW --> STOP["Reel Stop Sequence<br/><em>0.31s gap, decel, bounce</em>"]:::active
+
+  STOP --> REWARD1["Update Reward Info<br/><em>Transition hint &rarr; result mode</em>"]
+  REWARD1 --> EVAL["Evaluate Wins<br/><em>Count symbols, check 8+ matches</em>"]
+
+  EVAL -->|WINS| PRESENT["Win Present<br/><em>Highlight 1.5s, float scores, SFX</em>"]:::win
+  EVAL -->|NO WINS| CHECK_FEAT["Check Features"]
+
+  PRESENT --> REWARD2["Update Reward Info<br/><em>Win amount + multiplier badge</em>"]
+  REWARD2 --> MULT["Check Multipliers<br/><em>Chain lightning, accumulate</em>"]:::win
+  MULT --> REMOVE["Cascade Remove<br/><em>Fade out 0.3s</em>"]:::cascade
+  REMOVE --> GRAVITY["Cascade Gravity<br/><em>Drop remaining 0.5s</em>"]:::cascade
+  GRAVITY --> FILL["Cascade Fill<br/><em>New symbols from top 0.5s</em>"]:::cascade
+  FILL --> EVAL
+
+  CHECK_FEAT --> SCATTER{"3+ Scatters?"}
+  SCATTER -->|YES| FREESPIN["Free Spin Trigger<br/><em>3&rarr;10, 4&rarr;15, 5&rarr;25 spins</em>"]:::special
+  SCATTER -->|NO| BIGWIN{"Big Win?<br/><em>20&times;=BIG, 35&times;=MEGA, 50&times;=EPIC</em>"}
+
+  FREESPIN --> FSLOOP["Free Spin Loop<br/><em>No bet, multipliers accumulate</em>"]:::special
+  FSLOOP --> TOTALWIN["Total Win Popup"]:::win
+  TOTALWIN --> BIGWIN
+
+  BIGWIN -->|YES| BWPOPUP["Big Win Popup<br/><em>Spine anim + coin rain 2-4s</em>"]:::win
+  BIGWIN -->|NO| UPDATE
+  BWPOPUP --> UPDATE["Update Balance<br/><em>balance += totalWin &times; multiplier</em>"]
+
+  UPDATE --> ENDSPIN["END SPIN<br/><em>Auto-spin? Loop : IDLE</em>"]
+  ENDSPIN --> IDLE
+
+  classDef idle fill:#1a1e2e,stroke:#7a8399,color:#e2e8f5
+  classDef active fill:#0f1a28,stroke:#60a5fa,color:#60a5fa
+  classDef win fill:#1f1a0f,stroke:#f5c542,color:#f5c542
+  classDef cascade fill:#0f1f1a,stroke:#34d399,color:#34d399
+  classDef special fill:#1a1530,stroke:#a78bfa,color:#a78bfa
+  classDef warn fill:#2d1f0f,stroke:#fbbf24,color:#fbbf24
+  classDef error fill:#2d1015,stroke:#fb7185,color:#fb7185
+    </div>
+  </div>
+</div>
+
+<!-- ===== 8. STATE MACHINE ===== -->
+<div class="section" id="state-machine">
+  <div class="section-header">
+    <div class="icon" style="background:var(--fire-dim); border:1px solid var(--fire-border);">&#9881;</div>
+    <h2>State Machine</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+stateDiagram-v2
+  [*] --> LOADING
+  LOADING --> TAP_TO_START: assets loaded (3 stages)
+  TAP_TO_START --> IDLE: player taps
+
+  IDLE --> ON_STACK: click spin
+  ON_STACK --> SPINNING: begin spin
+
+  SPINNING --> NEAR_WIN: scatter detected
+  SPINNING --> STOPPING: response received
+  NEAR_WIN --> NEAR_WIN_END: 4s hold
+  NEAR_WIN_END --> STOPPING: resume stop
+
+  STOPPING --> FEATURING: all reels stopped
+  FEATURING --> END_SPIN: features complete
+  FEATURING --> TURBO_END_SPIN: skip animations
+
+  END_SPIN --> IDLE: spin complete
+  TURBO_END_SPIN --> IDLE: spin complete
+
+  state "Game Mode" as gm {
+    NORMAL --> FREESPIN: 3+ scatter trigger
+    FREESPIN --> NORMAL: end_round
+  }
+
+  state "Spin Speed" as ss {
+    NORMAL_SPEED: 0.9s
+    TURBO_SPEED: 0.15s
+    FAST_TO_RESULT: skip all
+  }
+    </div>
+  </div>
+</div>
+
+<!-- ===== 9. DATA FLOW ===== -->
+<div class="section" id="data-flow">
+  <div class="section-header">
+    <div class="icon" style="background:var(--thunder-dim); border:1px solid var(--thunder-border);">&#128259;</div>
+    <h2>Data Flow</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+flowchart LR
+  subgraph External["External"]
+    API["API Server<br/>/games/bet<br/>/result"]
+    MOCK["Mock Server<br/>7 scenarios"]
+  end
+
+  subgraph Network["Network Layer"]
+    NET["ZeusNetworkService<br/><em>Normalize compact<br/>& legacy formats</em>"]
+  end
+
+  subgraph Logic["Game Logic"]
+    FLOW["GameFlowService<br/><em>Orchestrate spin</em>"]
+    WIN["WinEvaluator"]
+    CASCADE["CascadeService"]
+    FEAT["FeatureManager"]
+  end
+
+  subgraph State["State"]
+    STORE["zeusLegacyRuntimeStore<br/><em>gamePhase | board | balance<br/>winAmount | freeSpins | multiplier</em>"]
+  end
+
+  subgraph UI["React UI"]
+    EDITOR["Editor Scene<br/><em>Static view</em>"]
+    PLAY["Runtime Play<br/><em>Animated</em>"]
+    POPUPS["Popups<br/><em>11 types</em>"]
+  end
+
+  API --> NET
+  MOCK --> NET
+  NET --> FLOW
+  FLOW --> WIN
+  FLOW --> CASCADE
+  FLOW --> FEAT
+  WIN --> STORE
+  CASCADE --> STORE
+  FEAT --> STORE
+  STORE --> EDITOR
+  STORE --> PLAY
+  STORE --> POPUPS
+
+  style External fill:#2d1015,stroke:#fb7185,color:#fb7185
+  style Network fill:#1f1a0f,stroke:#fbbf24,color:#fbbf24
+  style Logic fill:#0f1f1a,stroke:#34d399,color:#34d399
+  style State fill:#0f1a28,stroke:#60a5fa,color:#60a5fa
+  style UI fill:#1a1530,stroke:#a78bfa,color:#a78bfa
+    </div>
+  </div>
+</div>
+
+<!-- ===== 10. WIREFRAMES ===== -->
+<div class="section" id="wireframes">
+  <div class="section-header">
+    <div class="icon" style="background:var(--lightning-dim); border:1px solid var(--lightning-border);">&#128444;</div>
+    <h2>Game Wireframes</h2>
+  </div>
+
+  <div class="wireframe-grid">
+
+    <!-- Full game layout - visual -->
+    <div class="wireframe-card full-width">
+      <div class="wf-header">
+        <h3>Complete Game Layout (720&times;1280 Portrait)</h3>
+        <span class="wf-tag" style="background:var(--lightning-dim); color:var(--lightning); border:1px solid var(--lightning-border);">Main View</span>
+      </div>
+      <div class="wireframe-body" style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center;">
+        <!-- CSS visual wireframe -->
+        <div class="wf-visual" style="flex:0 0 auto;">
+          <div class="wf-phone-frame">
+            <div class="wf-char">&#9889;</div>
+            <div class="wf-reward-info">WIN UP TO x5000 YOUR BET!</div>
+            <div class="wf-board">
+              <div class="wf-cell high">H1</div><div class="wf-cell low">L2</div><div class="wf-cell scatter">SC</div><div class="wf-cell high">H3</div><div class="wf-cell low">L1</div><div class="wf-cell low">L4</div>
+              <div class="wf-cell low">L3</div><div class="wf-cell high">H2</div><div class="wf-cell low">L5</div><div class="wf-cell low">L1</div><div class="wf-cell high">H4</div><div class="wf-cell low">L2</div>
+              <div class="wf-cell high">H1</div><div class="wf-cell low">L4</div><div class="wf-cell low">L2</div><div class="wf-cell multi">M&times;5</div><div class="wf-cell low">L3</div><div class="wf-cell high">H2</div>
+              <div class="wf-cell low">L1</div><div class="wf-cell high">H3</div><div class="wf-cell low">L4</div><div class="wf-cell low">L2</div><div class="wf-cell low">L5</div><div class="wf-cell high">H1</div>
+              <div class="wf-cell low">L5</div><div class="wf-cell low">L1</div><div class="wf-cell high">H2</div><div class="wf-cell low">L3</div><div class="wf-cell high">H4</div><div class="wf-cell scatter">SC</div>
+            </div>
+            <div class="wf-row1">
+              <span>&#128176; Rp.35M</span>
+              <span style="font-weight:700;">BUY FEATURE</span>
+              <span>Rp. 0.00</span>
+            </div>
+            <div class="wf-row2">
+              <div style="text-align:center">
+                <div class="wf-btn-circle small">&#9889;</div>
+                <div class="wf-btn-label">Spin Opts</div>
+              </div>
+              <div style="text-align:center">
+                <div class="wf-btn-circle spin">SPIN</div>
+              </div>
+              <div style="text-align:center">
+                <div class="wf-btn-circle small">$</div>
+                <div class="wf-btn-label">Bet: 200</div>
+              </div>
+              <div style="text-align:center; margin-left:4px;">
+                <div class="wf-btn-circle small" style="width:18px; height:18px; font-size:0.45rem;">&#9776;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout legend -->
+        <div style="flex:1; min-width:280px; font-size:0.8rem;">
+          <div style="margin-bottom:1rem;">
+            <div style="font-weight:700; color:var(--lightning); margin-bottom:0.5rem;">Layout Zones</div>
+            <div style="display:grid; gap:0.4rem;">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:var(--lightning-dim); border:1px solid var(--lightning-border); border-radius:3px;"></div>
+                <span>Character (Zeus Spine + Pandora orb)</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:var(--gold-dim); border:1px solid var(--gold-border); border-radius:3px;"></div>
+                <span>Reward Info (hints / win / multiplier)</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:var(--thunder-dim); border:1px solid var(--thunder-border); border-radius:3px;"></div>
+                <span>6&times;5 Symbol Grid (30 symbol nodes)</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:var(--emerald-dim); border:1px solid var(--emerald-border); border-radius:3px;"></div>
+                <span>Row 1: Status bar (balance, buy feature, win)</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:var(--fire-dim); border:1px solid var(--fire-border); border-radius:3px;"></div>
+                <span>Row 2: Controls (SpinOpts, Spin, Bet, Menu)</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <div style="width:14px; height:14px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:3px;"></div>
+                <span>Row 3: Hidden (Info, Sound, History)</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <div style="font-weight:700; color:var(--gold); margin-bottom:0.5rem;">Symbol Types</div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <span class="wf-cell high" style="width:auto; padding:0.2rem 0.5rem; font-size:0.65rem;">HIGH (1-4)</span>
+              <span class="wf-cell low" style="width:auto; padding:0.2rem 0.5rem; font-size:0.65rem;">LOW (11-15)</span>
+              <span class="wf-cell scatter" style="width:auto; padding:0.2rem 0.5rem; font-size:0.65rem;">SCATTER</span>
+              <span class="wf-cell multi" style="width:auto; padding:0.2rem 0.5rem; font-size:0.65rem;">MULTI &times;N</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-weight:700; color:var(--fire); margin-bottom:0.5rem;">Row 2/3 Toggle</div>
+            <div style="color:var(--text-dim); font-size:0.75rem; line-height:1.5;">
+              Menu (&#9776;) toggles Row 2 &harr; Row 3.<br/>
+              Row 3: Info / Sound / History buttons.<br/>
+              Clicking any Row 3 button auto-returns to Row 2.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spin Button States -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Spin Button States</h3>
+        <span class="wf-tag" style="background:var(--lightning-dim); color:var(--lightning); border:1px solid var(--lightning-border);">Spine</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem; text-align:center;">
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.5rem; box-shadow:0 0 15px rgba(167,139,250,0.3);">SPIN</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Idle<br/><span style="color:var(--lightning); font-size:0.55rem;">particles active</span></div>
+          </div>
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:40px; height:40px; font-size:0.5rem; opacity:0.8;">&#9632;</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Spinning<br/><span style="color:var(--fire); font-size:0.55rem;">stop icon</span></div>
+          </div>
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.5rem; border-color:rgba(245,197,66,0.4);">AUTO<br/><span style="font-size:0.7rem;">[25]</span></div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Auto<br/><span style="color:var(--gold); font-size:0.55rem;">counter overlay</span></div>
+          </div>
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.5rem; opacity:0.4; box-shadow:none;">SPIN</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Disabled<br/><span style="color:var(--text-muted); font-size:0.55rem;">50% alpha</span></div>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem; display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; text-align:center;">
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.45rem; border-color:rgba(245,197,66,0.4); color:var(--gold);">FREE</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Bonus<br/><span style="color:var(--gold); font-size:0.55rem;">golden glow</span></div>
+          </div>
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.45rem;">HOLD</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Hold<br/><span style="color:var(--lightning); font-size:0.55rem;">long press</span></div>
+          </div>
+          <div>
+            <div class="wf-btn-circle spin" style="margin:0 auto 0.4rem; width:44px; height:44px; font-size:0.45rem; box-shadow:0 0 20px rgba(167,139,250,0.4);">MAX</div>
+            <div style="font-size:0.65rem; color:var(--text-dim);">Hold Max<br/><span style="color:var(--lightning); font-size:0.55rem;">full ring</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbol Cell -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Symbol Cell (143&times;145px)</h3>
+        <span class="wf-tag" style="background:var(--emerald-dim); color:var(--emerald); border:1px solid var(--emerald-border);">6 States</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+          <div style="width:80px; height:90px; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.25); border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.6rem;">
+            <div style="font-size:1.2rem;">&#9889;</div>
+            <div style="color:var(--lightning); font-weight:600;">Spine</div>
+            <div style="color:var(--text-muted); font-size:0.5rem;">or Static PNG</div>
+            <div style="position:absolute; bottom:2px; right:4px; font-size:0.45rem; color:var(--gold);">[H1]</div>
+          </div>
+        </div>
+        <div style="margin-top:0.75rem; display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; font-size:0.65rem; text-align:center;">
+          <div style="padding:0.3rem; background:rgba(0,0,0,0.3); border-radius:4px; border:1px solid var(--border);">&#9898; Normal</div>
+          <div style="padding:0.3rem; background:rgba(245,197,66,0.08); border-radius:4px; border:1px solid var(--gold-border);">&#10024; Highlighted</div>
+          <div style="padding:0.3rem; background:rgba(255,255,255,0.03); border-radius:4px; border:1px solid var(--border); opacity:0.5;">&#128064; Dimmed</div>
+          <div style="padding:0.3rem; background:rgba(251,113,133,0.08); border-radius:4px; border:1px solid var(--fire-border);">&#128308; Removing</div>
+          <div style="padding:0.3rem; background:rgba(52,211,153,0.08); border-radius:4px; border:1px solid var(--emerald-border);">&#11015; Falling</div>
+          <div style="padding:0.3rem; background:rgba(96,165,250,0.08); border-radius:4px; border:1px solid var(--thunder-border);">&#11014; New (fill)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reward Information -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Reward Information Display</h3>
+        <span class="wf-tag" style="background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold-border);">Above Board</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:grid; gap:0.75rem;">
+          <div style="padding:0.6rem 1rem; background:rgba(245,197,66,0.05); border:1px solid rgba(245,197,66,0.15); border-radius:6px; text-align:center;">
+            <div style="font-size:0.6rem; color:var(--text-muted); margin-bottom:0.2rem;">BEFORE SPIN (hint mode)</div>
+            <div style="color:var(--gold); font-size:0.85rem; font-weight:600;">"WIN UP TO x5000 YOUR BET!"</div>
+            <div style="font-size:0.55rem; color:var(--text-muted);">Rotating hints, auto-scroll</div>
+          </div>
+          <div style="padding:0.6rem 1rem; background:rgba(167,139,250,0.05); border:1px solid rgba(167,139,250,0.15); border-radius:6px; text-align:center;">
+            <div style="font-size:0.6rem; color:var(--text-muted); margin-bottom:0.2rem;">AFTER SPIN (win mode)</div>
+            <div style="color:var(--gold); font-size:1rem; font-weight:700;">WIN  1,250.00</div>
+            <div style="display:inline-block; padding:0.15rem 0.4rem; background:var(--emerald-dim); border:1px solid var(--emerald-border); border-radius:4px; color:var(--emerald); font-weight:700; font-size:0.75rem; margin-top:0.2rem;">&times;5</div>
+          </div>
+          <div style="padding:0.6rem 1rem; background:rgba(52,211,153,0.05); border:1px solid rgba(52,211,153,0.15); border-radius:6px; text-align:center;">
+            <div style="font-size:0.6rem; color:var(--text-muted); margin-bottom:0.2rem;">TOTAL WIN ACCUMULATION</div>
+            <div style="color:var(--emerald); font-size:1rem; font-weight:700;">TOTAL WIN  50,000.00</div>
+            <div style="font-size:0.55rem; color:var(--text-muted);">+ Spine particle effects</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Loading Screen</h3>
+        <span class="wf-tag" style="background:var(--sky-dim); color:var(--sky); border:1px solid var(--sky-border);">Full Screen</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="background:linear-gradient(180deg, #0a0c1a 0%, #151830 100%); border-radius:10px; padding:1.5rem 1rem; text-align:center; border:1px solid var(--border);">
+          <div style="font-size:1.8rem; margin-bottom:0.5rem;">&#9889;</div>
+          <div style="color:var(--gold); font-weight:700; font-size:0.9rem; margin-bottom:0.3rem;">ZEUS LEGACY</div>
+          <div style="color:var(--text-muted); font-size:0.6rem; margin-bottom:1rem;">(zeus-tittle-screen.jpg)</div>
+          <div style="color:var(--text-dim); font-size:0.7rem; font-style:italic; margin-bottom:1rem;">"WIN UP TO X5000"</div>
+          <div style="font-size:0.7rem; color:var(--text-dim); margin-bottom:0.3rem;">Loading 75%</div>
+          <div style="width:80%; margin:0 auto 1rem; height:8px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden;">
+            <div style="width:75%; height:100%; background:linear-gradient(90deg, var(--lightning), var(--gold)); border-radius:4px; box-shadow:0 0 10px rgba(167,139,250,0.4);"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.3rem; font-size:0.55rem; color:var(--text-muted); margin-bottom:0.75rem;">
+            <div>Scene: 0-80%</div>
+            <div>Symbols: 80-95%</div>
+            <div>Audio: 95-100%</div>
+          </div>
+          <div style="padding:0.4rem 1.5rem; display:inline-block; border:1px solid var(--gold-border); border-radius:6px; color:var(--gold); font-weight:700; font-size:0.75rem; background:var(--gold-dim);">TAP TO START</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Near Win -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Near-Win Tease</h3>
+        <span class="wf-tag" style="background:var(--amber-dim); color:var(--amber); border:1px solid var(--amber-border);">Dramatic</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:2px; margin-bottom:0.75rem;">
+          <div class="wf-cell scatter" style="height:28px;">SC</div><div class="wf-cell low" style="height:28px; opacity:0.5;">L2</div><div class="wf-cell scatter" style="height:28px;">SC</div><div class="wf-cell high" style="height:28px; opacity:0.5;">H3</div><div style="height:28px; background:repeating-linear-gradient(180deg, rgba(167,139,250,0.2) 0px, rgba(96,165,250,0.1) 4px, transparent 8px); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:0.4rem; color:var(--text-muted);">blur</div><div style="height:28px; background:repeating-linear-gradient(180deg, rgba(167,139,250,0.2) 0px, rgba(96,165,250,0.1) 4px, transparent 8px); border-radius:3px;"></div>
+          <div class="wf-cell low" style="height:28px; opacity:0.5;">L3</div><div class="wf-cell high" style="height:28px; opacity:0.5;">H2</div><div class="wf-cell low" style="height:28px; opacity:0.5;">L5</div><div class="wf-cell low" style="height:28px; opacity:0.5;">L1</div><div style="height:28px; background:repeating-linear-gradient(180deg, rgba(167,139,250,0.2) 0px, rgba(96,165,250,0.1) 4px, transparent 8px); border-radius:3px;"></div><div style="height:28px; background:repeating-linear-gradient(180deg, rgba(167,139,250,0.2) 0px, rgba(96,165,250,0.1) 4px, transparent 8px); border-radius:3px;"></div>
+        </div>
+        <div style="font-size:0.7rem; color:var(--amber);">
+          Reels 4-5 still spinning at <strong>150px/s</strong> (slow crawl)<br/>
+          Stopped reels dimmed to <strong>50% opacity</strong><br/>
+          Scatters highlighted &mdash; need 1 more for free spins<br/>
+          <span style="color:var(--text-muted);">Audio: near-win tension loop, 4s hold</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cascade Animation -->
+    <div class="wireframe-card full-width">
+      <div class="wf-header">
+        <h3>Cascade Animation Sequence</h3>
+        <span class="wf-tag" style="background:var(--emerald-dim); color:var(--emerald); border:1px solid var(--emerald-border);">4 Steps</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; text-align:center; font-size:0.7rem;">
+          <div>
+            <div style="color:var(--gold); font-weight:700; margin-bottom:0.4rem;">1. WIN DETECTED</div>
+            <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:1px;">
+              <div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div><div class="wf-cell low" style="height:22px;">L3</div><div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div><div class="wf-cell high" style="height:22px;">H4</div>
+              <div class="wf-cell high" style="height:22px;">H3</div><div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div><div class="wf-cell low" style="height:22px;">L4</div><div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell low" style="height:22px; border-color:var(--gold-border); background:rgba(245,197,66,0.15);">L1</div>
+            </div>
+            <div style="color:var(--gold); margin-top:0.3rem;">8&times; L1 = glow</div>
+          </div>
+          <div>
+            <div style="color:var(--fire); font-weight:700; margin-bottom:0.4rem;">2. SYMBOLS REMOVED</div>
+            <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:1px;">
+              <div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div><div class="wf-cell high" style="height:22px;">H2</div><div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div><div class="wf-cell low" style="height:22px;">L3</div><div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div><div class="wf-cell high" style="height:22px;">H4</div>
+              <div class="wf-cell high" style="height:22px;">H3</div><div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div><div class="wf-cell low" style="height:22px;">L4</div><div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div><div class="wf-cell high" style="height:22px;">H2</div><div style="height:22px; background:rgba(251,113,133,0.1); border:1px dashed rgba(251,113,133,0.2); border-radius:3px;"></div>
+            </div>
+            <div style="color:var(--fire); margin-top:0.3rem;">fade out 0.3s</div>
+          </div>
+          <div>
+            <div style="color:var(--emerald); font-weight:700; margin-bottom:0.4rem;">3. GRAVITY</div>
+            <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:1px;">
+              <div style="height:22px; border:1px solid transparent; border-radius:3px;"></div><div style="height:22px; border:1px solid transparent; border-radius:3px;"></div><div style="height:22px; border:1px solid transparent; border-radius:3px;"></div><div style="height:22px; border:1px solid transparent; border-radius:3px;"></div><div style="height:22px; border:1px solid transparent; border-radius:3px;"></div><div style="height:22px; border:1px solid transparent; border-radius:3px;"></div>
+              <div class="wf-cell high" style="height:22px;">H3</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell low" style="height:22px;">L4</div><div class="wf-cell low" style="height:22px;">L3</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell high" style="height:22px;">H4</div>
+            </div>
+            <div style="color:var(--emerald); margin-top:0.3rem;">drop 0.5s &#11015;</div>
+          </div>
+          <div>
+            <div style="color:var(--thunder); font-weight:700; margin-bottom:0.4rem;">4. FILL</div>
+            <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:1px;">
+              <div class="wf-cell high" style="height:22px; border-style:dashed;">H2</div><div class="wf-cell low" style="height:22px; border-style:dashed;">L3</div><div class="wf-cell low" style="height:22px; border-style:dashed;">L5</div><div class="wf-cell high" style="height:22px; border-style:dashed;">H3</div><div class="wf-cell low" style="height:22px; border-style:dashed;">L4</div><div class="wf-cell high" style="height:22px; border-style:dashed;">H1</div>
+              <div class="wf-cell high" style="height:22px;">H3</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell low" style="height:22px;">L4</div><div class="wf-cell low" style="height:22px;">L3</div><div class="wf-cell high" style="height:22px;">H2</div><div class="wf-cell high" style="height:22px;">H4</div>
+            </div>
+            <div style="color:var(--thunder); margin-top:0.3rem;">new from top &#8635;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Free Spin Mode -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Free Spin Mode</h3>
+        <span class="wf-tag" style="background:var(--lightning-dim); color:var(--lightning); border:1px solid var(--lightning-border);">Special</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:flex; gap:1rem; justify-content:center; margin-bottom:0.75rem;">
+          <div style="padding:0.4rem 1rem; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.25); border-radius:6px; text-align:center;">
+            <div style="font-size:0.6rem; color:var(--text-muted);">FREE SPINS</div>
+            <div style="font-size:1.2rem; font-weight:700; color:var(--lightning);">15</div>
+          </div>
+          <div style="padding:0.4rem 1rem; background:rgba(245,197,66,0.1); border:1px solid rgba(245,197,66,0.25); border-radius:6px; text-align:center;">
+            <div style="font-size:0.6rem; color:var(--text-muted);">MULTIPLIER</div>
+            <div style="font-size:1.2rem; font-weight:700; color:var(--gold);">&times;25</div>
+          </div>
+        </div>
+        <div style="font-size:0.7rem; color:var(--text-dim); line-height:1.5;">
+          No bet deduction &bull; Multipliers accumulate across all spins<br/>
+          Can retrigger with 3+ scatters &bull; Total win shown at end<br/>
+          Chain lightning connects all multiplier symbols
+        </div>
+      </div>
+    </div>
+
+    <!-- Editor Integration -->
+    <div class="wireframe-card">
+      <div class="wf-header">
+        <h3>Editor Integration View</h3>
+        <span class="wf-tag" style="background:var(--thunder-dim); color:var(--thunder); border:1px solid var(--thunder-border);">PixiJS Editor</span>
+      </div>
+      <div class="wireframe-body">
+        <div style="display:grid; grid-template-columns:100px 1fr 120px; gap:4px; font-size:0.55rem; height:200px; border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+          <div style="background:rgba(0,0,0,0.4); padding:4px; border-right:1px solid var(--border);">
+            <div style="font-weight:700; color:var(--lightning); margin-bottom:2px;">Hierarchy</div>
+            <div style="color:var(--text-muted); line-height:1.4;">
+              &#9889;ZeusGame<br/>
+              &#9500; BG<br/>
+              &#9500; Char<br/>
+              &#9500; RwdInfo<br/>
+              &#9500; Board<br/>
+              &#9474; &#9500; Reels<br/>
+              &#9474; &#9474; &#9500; R0-R5<br/>
+              &#9500; UI<br/>
+              &#9474; &#9500; TopBar<br/>
+              &#9474; &#9500; BotBar<br/>
+              &#9500; Popups<br/>
+              &#9492; Audio
+            </div>
+          </div>
+          <div style="background:rgba(0,0,0,0.3); padding:4px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px;">
+            <div style="font-weight:700; color:var(--text-dim);">Scene View</div>
+            <div style="width:80%; display:grid; grid-template-columns:repeat(6,1fr); gap:1px;">
+              <div style="height:10px; background:rgba(167,139,250,0.2); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(245,197,66,0.2); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(167,139,250,0.2); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(167,139,250,0.2); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(167,139,250,0.2); border-radius:1px;"></div>
+              <div style="height:10px; background:rgba(96,165,250,0.15); border-radius:1px;"></div>
+            </div>
+            <div style="font-size:0.4rem; color:var(--text-muted);">&#9654; Play &nbsp; &#9208; Pause &nbsp; &#9632; Stop</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.4); padding:4px; border-left:1px solid var(--border);">
+            <div style="font-weight:700; color:var(--rose); margin-bottom:2px;">Inspector</div>
+            <div style="color:var(--text-muted); line-height:1.4;">
+              Zeus Config<br/>
+              Reels: 6<br/>
+              Rows: 5<br/>
+              Gap: 143/145<br/>
+              Normal: 0.9s<br/>
+              Turbo: 0.15s<br/>
+              NearWin: on<br/>
+              FreeSpins: on<br/>
+              BuyFeature: on
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 11. POPUP WIREFRAMES ===== -->
+<div class="section" id="popups">
+  <div class="section-header">
+    <div class="icon" style="background:var(--amber-dim); border:1px solid var(--amber-border);">&#128194;</div>
+    <h2>Popup Wireframes (11 Types)</h2>
+  </div>
+
+  <div class="popup-grid">
+    <!-- Bet Options -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--gold);">&#128176; Bet Options</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div class="popup-title-bar"><span class="ptitle">BET OPTIONS</span><span class="pclose">&times;</span></div>
+          <div style="display:flex; justify-content:space-between; width:100%; font-size:0.65rem;">
+            <span>&#9432; Extra bet</span>
+            <div class="ptoggle-box"><div class="knob"></div></div>
+          </div>
+          <div class="pvalue">Rp.0.20</div>
+          <div class="pslider"><div class="pslider-fill"></div><div class="pslider-knob"></div></div>
+          <div class="pgrid">
+            <div class="pgrid-item">1</div><div class="pgrid-item">10</div><div class="pgrid-item">60</div><div class="pgrid-item selected">100</div>
+            <div class="pgrid-item">200</div><div class="pgrid-item">500</div><div class="pgrid-item">800</div><div class="pgrid-item">1000</div>
+          </div>
+          <div class="pbtn">CONFIRM</div>
+          <div class="psubtext">&#128176; Rp. 35,595,280.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spin Options -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--lightning);">&#9889; Spin Options</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div class="popup-title-bar"><span class="ptitle">SPIN OPTIONS</span><span class="pclose">&times;</span></div>
+          <div class="ptoggle-row">
+            <div class="ptoggle"><span>TURBO</span><div class="ptoggle-box"><div class="knob"></div></div></div>
+            <div class="ptoggle"><span>AUTO</span><div class="ptoggle-box on"><div class="knob"></div></div></div>
+          </div>
+          <div class="pgrid" style="margin-top:0.5rem;">
+            <div class="pgrid-item">&infin;</div><div class="pgrid-item">10</div><div class="pgrid-item selected">25</div><div class="pgrid-item">50</div>
+            <div class="pgrid-item">75</div><div class="pgrid-item">100</div><div class="pgrid-item">800</div><div class="pgrid-item">1000</div>
+          </div>
+          <div class="pbtn">CONFIRM</div>
+          <div class="psubtext">&#128176; Rp. 35,595,280.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Win Popup -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--gold);">&#127942; Win</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="color:var(--gold); font-size:0.7rem;">&#10024; &#10024; &#10024; &#10024; &#10024;</div>
+          <div style="font-weight:700; color:var(--text);">YOU WIN!</div>
+          <div class="pvalue">1,250.00</div>
+          <div class="psubtext">(animated counter)</div>
+          <div style="font-size:0.7rem;">&#129689; &#129689; &#129689; &#129689; &#129689;</div>
+          <div class="psubtext">auto-close: 5s</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Big Win -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--amber);">&#9889; Big Win / Mega / Epic</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="color:var(--amber); font-size:0.7rem;">&#9889; &#9889; &#9889; &#9889; &#9889;</div>
+          <div style="font-weight:700; font-size:1rem; color:var(--amber);">BIG WIN!</div>
+          <div class="pvalue">25,000.00</div>
+          <div class="psubtext">Spine anim + coin rain</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.3rem; width:100%; margin-top:0.3rem; font-size:0.6rem;">
+            <div style="padding:0.2rem; background:var(--gold-dim); border-radius:3px; color:var(--gold);">20&times; = BIG</div>
+            <div style="padding:0.2rem; background:var(--amber-dim); border-radius:3px; color:var(--amber);">35&times; = MEGA</div>
+            <div style="padding:0.2rem; background:var(--fire-dim); border-radius:3px; color:var(--fire);">50&times; = EPIC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buy Feature -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--lightning);">&#11088; Buy Feature</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="font-weight:700; color:var(--gold); font-size:0.9rem;">BUY FEATURE</div>
+          <div style="font-size:1.5rem;">&#9889;</div>
+          <div style="color:var(--text-dim);">Zeus character art<br/>(full-screen cinematic)</div>
+          <div style="font-weight:600; color:var(--gold);">ZEUS POWER</div>
+          <div class="psubtext">After purchase, directly enter feature game</div>
+          <div class="pvalue">Rp. 20,000.00</div>
+          <div style="color:var(--text-muted); font-size:0.65rem; text-decoration:underline;">close</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Win -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--emerald);">&#127881; Total Win</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div class="psubtext">total-freespin.json (Spine)</div>
+          <div style="font-weight:700; color:var(--text);">TOTAL FREE SPIN WIN</div>
+          <div class="pvalue">125,000.00</div>
+          <div style="font-size:0.65rem; color:var(--text-dim);">Multiplier: &times;250 &bull; Spins: 25 &bull; Cascades: 47</div>
+          <div class="pbtn">CONTINUE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Info / Rules -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--sky);">&#128214; Game Info / Rules</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div class="popup-title-bar"><span class="ptitle">GAME INFO</span><span class="pclose">&times;</span></div>
+          <div style="text-align:left; width:100%; font-size:0.6rem; line-height:1.5;">
+            <div style="color:var(--gold); font-weight:600;">FREE SPIN (Scatter)</div>
+            <div>6 sym = 1000 &bull; 5 sym = 50 &bull; 4 sym = 30</div>
+            <div style="color:var(--gold); font-weight:600; margin-top:0.3rem;">HIGH SYMBOLS</div>
+            <div>H1-H4: 8-9 = 500-2000, 10-11 = 1000-5000</div>
+            <div style="color:var(--gold); font-weight:600; margin-top:0.3rem;">PANDORA ORB</div>
+            <div>&#128309;&times;2 &#128994;&times;3 &#128308;&times;5 &#128993;&times;10</div>
+          </div>
+          <div class="psubtext" style="margin-top:0.3rem;">&#8597; single scrollable page</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game History -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--thunder);">&#128197; Game History</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div class="popup-title-bar"><span class="ptitle">&#128197; Game History</span><span class="pclose">&times;</span></div>
+          <div style="font-size:0.55rem; color:var(--text-muted); margin-bottom:0.3rem;">Time (GMT +7)</div>
+          <div style="text-align:left; width:100%; font-size:0.6rem;">
+            <div style="color:var(--text-muted); font-weight:600; margin-bottom:0.2rem;">Today</div>
+            <div style="display:flex; justify-content:space-between; padding:0.2rem; background:rgba(0,0,0,0.3); border-radius:3px; margin-bottom:2px;">
+              <span style="color:var(--fire);">&#8595; Bet: 200</span>
+              <span style="color:var(--fire);">0.00</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:0.2rem; background:rgba(0,0,0,0.3); border-radius:3px; margin-bottom:2px;">
+              <span style="color:var(--emerald);">&#8593; Bet: 200</span>
+              <span style="color:var(--emerald);">1,250.00</span>
+            </div>
+            <div style="color:var(--text-muted); font-weight:600; margin:0.2rem 0;">Yesterday</div>
+            <div style="display:flex; justify-content:space-between; padding:0.2rem; background:rgba(0,0,0,0.3); border-radius:3px;">
+              <span style="color:var(--fire);">&#8595; Bet: 500</span>
+              <span style="color:var(--fire);">0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bonus Active -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--lightning);">&#9889; Bonus Active</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="font-size:0.7rem;">&#9889;&#9889;&#9889; LIGHTNING &#9889;&#9889;&#9889;</div>
+          <div style="font-weight:700; color:var(--lightning);">FREE SPINS BONUS!</div>
+          <div>You won 10 FREE SPINS!</div>
+          <div style="display:flex; gap:0.5rem;">
+            <div style="padding:0.3rem 0.7rem; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.2); border-radius:4px; font-size:0.65rem;">Athena</div>
+            <div style="padding:0.3rem 0.7rem; background:rgba(251,113,133,0.1); border:1px solid rgba(251,113,133,0.2); border-radius:4px; font-size:0.65rem;">Ares</div>
+          </div>
+          <div class="psubtext">roulette selection animation</div>
+          <div class="pbtn">START BONUS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More Free Spins -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--emerald);">&#128260; More Free Spins</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="font-weight:700; color:var(--lightning);">&#9889; RETRIGGER! &#9889;</div>
+          <div style="font-size:0.9rem; font-weight:700; color:var(--gold);">+15 MORE FREE SPINS!</div>
+          <div style="font-size:0.65rem; color:var(--text-dim);">Scatter: 4 &bull; Remaining: 15+8 = 23</div>
+          <div class="psubtext">auto-continue: 3s</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--fire);">&#9888; Error</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="font-weight:700; color:var(--fire);">&#9888; CONNECTION ERROR</div>
+          <div style="color:var(--text-dim);">Transaction failed. Error: 2001</div>
+          <div class="psubtext">Please try again or contact support.</div>
+          <div style="display:flex; gap:0.5rem;">
+            <div class="pbtn">RETRY</div>
+            <div class="pbtn" style="background:rgba(255,255,255,0.05); border-color:var(--border); color:var(--text-dim);">CLOSE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payout Info -->
+    <div class="popup-card">
+      <div class="popup-header" style="color:var(--gold);">&#128200; Payout Info</div>
+      <div class="popup-body">
+        <div class="popup-preview">
+          <div style="display:flex; gap:0.3rem; flex-wrap:wrap; justify-content:center;">
+            <div style="width:30px; height:30px; background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.25); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:0.4rem;"><span>H1</span><span style="color:var(--gold);">300x</span></div>
+            <div style="width:30px; height:30px; background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.25); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:0.4rem;"><span>H2</span><span style="color:var(--gold);">300x</span></div>
+            <div style="width:30px; height:30px; background:rgba(96,165,250,0.12); border:1px solid rgba(96,165,250,0.2); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:0.4rem;"><span>L1</span><span style="color:var(--gold);">300x</span></div>
+            <div style="width:30px; height:30px; background:rgba(245,197,66,0.15); border:1px solid rgba(245,197,66,0.25); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:0.4rem;"><span>SC</span><span style="color:var(--gold);">FS</span></div>
+          </div>
+          <div class="psubtext">12+ matches shown &bull; Compact paytable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 12. AGENT TEAM ===== -->
+<div class="section" id="agents">
+  <div class="section-header">
+    <div class="icon" style="background:var(--rose-dim); border:1px solid rgba(244,114,182,0.3);">&#129302;</div>
+    <h2>Agent Team (8 Agents)</h2>
+  </div>
+
+  <div class="agent-grid">
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--fire);">A0: Asset Agent</div>
+      <div class="agent-role">Asset pipeline, Spine compat, bulk import</div>
+      <div class="agent-scope">zeus-legacy/assets/ &rarr; project/assets/</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--lightning);">A1: Types Agent</div>
+      <div class="agent-role">All TypeScript type definitions</div>
+      <div class="agent-scope">src/core/types/ only</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--thunder);">A2: Store Agent</div>
+      <div class="agent-role">Runtime store + state management</div>
+      <div class="agent-scope">src/renderer/store/ only</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--emerald);">A3: Services Agent</div>
+      <div class="agent-role">Pure game logic services</div>
+      <div class="agent-scope">services/zeus-legacy/ only</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--gold);">A4: Components Agent</div>
+      <div class="agent-role">React components + renderers</div>
+      <div class="agent-scope">components/zeus-legacy*/</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--rose);">A5: Inspector Agent</div>
+      <div class="agent-role">Inspector editors + constants</div>
+      <div class="agent-scope">components/inspector/ + constants/</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--sky);">A6: Integration Agent</div>
+      <div class="agent-role">Wire everything together</div>
+      <div class="agent-scope">Cross-cutting files</div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name" style="color:var(--amber);">A7: Test Agent</div>
+      <div class="agent-role">Write + run all tests</div>
+      <div class="agent-scope">tests/e2e/zeus-legacy/</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 13. SUMMARY ===== -->
+<div class="section" id="summary">
+  <div class="section-header">
+    <div class="icon" style="background:var(--emerald-dim); border:1px solid var(--emerald-border);">&#128202;</div>
+    <h2>Phase Summary</h2>
+  </div>
+
+  <div class="summary-table-wrapper">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Tasks</th>
+          <th>Tests</th>
+          <th>Agents</th>
+          <th>Est. Tokens</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--fire);">Phase 0: Asset Pipeline</td><td class="tasks-col">5</td><td class="tests-col">0</td><td>A0</td><td>~10K</td><td><span style="color:var(--fire);">Must Do First</span></td></tr>
+        <tr><td style="color:var(--lightning);">Phase 1: Types &amp; Store</td><td class="tasks-col">6 + tests</td><td class="tests-col">12</td><td>A1 &rarr; A2</td><td>~15K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--thunder);">Phase 2: Engine Services</td><td class="tasks-col">7 + tests</td><td class="tests-col">18</td><td>A3</td><td>~25K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--emerald);">Phase 3: Scene Rendering</td><td class="tasks-col">8 + tests</td><td class="tests-col">10</td><td>A4</td><td>~20K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--gold);">Phase 4: UI Hierarchy</td><td class="tasks-col">10 + tests</td><td class="tests-col">10</td><td>A4 + A5</td><td>~30K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--sky);">Phase 5: Feature Services</td><td class="tasks-col">4 + tests</td><td class="tests-col">12</td><td>A3</td><td>~25K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--rose);">Phase 6: Inspector</td><td class="tasks-col">8 + tests</td><td class="tests-col">8</td><td>A5</td><td>~20K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--fire);">Phase 7: Character</td><td class="tasks-col">4 + tests</td><td class="tests-col">10</td><td>A3 + A4</td><td>~20K</td><td><span style="color:var(--fire);">BLOCKED (Spine)</span></td></tr>
+        <tr><td style="color:var(--amber);">Phase 8: Popup System</td><td class="tasks-col">13 + tests</td><td class="tests-col">13</td><td>A4</td><td>~15K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--orange);">Phase 9: Audio</td><td class="tasks-col">3 + tests</td><td class="tests-col">8</td><td>A3</td><td>~15K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--thunder);">Phase 10: Network</td><td class="tasks-col">3 + tests</td><td class="tests-col">10</td><td>A3</td><td>~15K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--lightning);">Phase 11: Runtime</td><td class="tasks-col">7 + tests</td><td class="tests-col">15</td><td>A4 + A6</td><td>~30K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr><td style="color:var(--emerald);">Phase 12: Polish &amp; Tests</td><td class="tasks-col">5</td><td class="tests-col">100+</td><td>A7 + A6</td><td>~25K</td><td><span style="color:var(--text-muted);">Not Started</span></td></tr>
+        <tr style="font-weight:700; background:var(--surface2);">
+          <td>TOTAL</td>
+          <td class="tasks-col">83 tasks</td>
+          <td class="tests-col">126+ tests</td>
+          <td>8 agents</td>
+          <td>~265K</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== ASSET PIPELINE ===== -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon" style="background:var(--orange-dim); border:1px solid rgba(251,146,60,0.3);">&#128230;</div>
+    <h2>Asset Pipeline Flow</h2>
+  </div>
+
+  <div class="mermaid-container">
+    <div class="mermaid">
+flowchart LR
+  SCAN["1. SCAN<br/><em>Walk zeus-legacy/<br/>resources/</em>"]:::step --> VALIDATE["2. VALIDATE<br/><em>Spine version?<br/>Image formats?<br/>Missing files?</em>"]:::step
+  VALIDATE --> COPY["3. COPY/CONVERT<br/><em>Standard naming<br/>14 categories</em>"]:::step
+  COPY --> REGISTER["4. REGISTER<br/><em>zeus-legacy-<br/>assets.json</em>"]:::step
+  REGISTER --> LINK["5. LINK<br/><em>Symbol configs<br/>Part references<br/>Audio controller</em>"]:::step
+
+  VALIDATE -->|"Spine 3.8"| FLAG["FLAG/CONVERT"]:::warn
+  VALIDATE -->|".fnt"| FONTFLAG["FONT FLAG"]:::warn
+
+  classDef step fill:#0f1a28,stroke:#60a5fa,color:#60a5fa
+  classDef warn fill:#2d1f0f,stroke:#fbbf24,color:#fbbf24
+    </div>
+  </div>
+
+  <div class="summary-table-wrapper">
+    <table class="summary-table">
+      <thead><tr><th>Category</th><th>Count</th><th>Source</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td>Spine Sets</td><td>14</td><td>resources/spine/</td><td>zeus-legacy/spine/</td></tr>
+        <tr><td>Symbol Spines</td><td>11</td><td>resources/symbols/spine/</td><td>zeus-legacy/symbols/spine/</td></tr>
+        <tr><td>Static PNGs</td><td>15+</td><td>resources/symbols/static/</td><td>zeus-legacy/symbols/static/</td></tr>
+        <tr><td>Blur PNGs</td><td>11+</td><td>resources/symbols/blur/</td><td>zeus-legacy/symbols/blur/</td></tr>
+        <tr><td>GUI PNGs</td><td>18</td><td>resources/GUI/</td><td>zeus-legacy/gui/</td></tr>
+        <tr><td>VFX/Particles</td><td>45+</td><td>resources/effects/</td><td>zeus-legacy/effects/</td></tr>
+        <tr><td>Audio</td><td>32</td><td>assets_raw/audio/</td><td>zeus-legacy/audio/</td></tr>
+        <tr><td>Bitmap Fonts</td><td>4 sets</td><td>resources/bitmap-font/</td><td>zeus-legacy/fonts/</td></tr>
+        <tr style="font-weight:700;"><td>Total</td><td>~359</td><td colspan="2"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  Zeus Legacy Integration Blueprint &mdash; Generated from <code>docs/integrate-zeus-legacy/</code><br/>
+  13 Phases &bull; 83 Tasks &bull; 126+ Tests &bull; 8 Agents &bull; 359 Assets &bull; 70+ GameObjects
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    darkMode: true,
+    background: '#0f1118',
+    primaryColor: '#1a1530',
+    primaryTextColor: '#e2e8f5',
+    primaryBorderColor: '#a78bfa',
+    lineColor: '#4d566d',
+    secondaryColor: '#0f1a28',
+    tertiaryColor: '#0f1f1a',
+    fontFamily: "'DM Sans', system-ui, sans-serif",
+    fontSize: '13px',
+    nodeBorder: '#a78bfa',
+    clusterBkg: '#12151d',
+    clusterBorder: 'rgba(255,255,255,0.08)',
+    edgeLabelBackground: '#1a1e2e',
+  },
+  flowchart: {
+    curve: 'basis',
+    padding: 15,
+    useMaxWidth: true,
+  },
+  stateDiagram: {
+    useMaxWidth: true,
+  }
+});
+</script>
+
+</body>
+</html>
